@@ -9,6 +9,9 @@
     <string name="btn_chup">Chụp ảnh (cần quyền CAMERA)</string>
     <string name="btn_thong_bao">Gửi thông báo (cần POST_NOTIFICATIONS)</string>
     <string name="open_settings">Mở Cài đặt ứng dụng</string>
+    <string name="nc1_btn">Xin cả hai quyền cùng lúc (NC1)</string>
+    <string name="nc1_ket_qua">NC1 – CAMERA: %1$s, THÔNG BÁO: %2$s</string>
+    <string name="nc3_tac_nghia">Mở lại ứng dụng (NC3)</string>
     <string name="agree">Đồng ý</string>
     <string name="cancel">Để sau</string>
     <string name="rationale_title">Vì sao cần quyền này?</string>

@@ -85,6 +85,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    // NC1: xin hai quyền cùng lúc, callback nhận Map<String, Boolean>
+    private final ActivityResultLauncher<String[]> xinHaiQuyen = registerForActivityResult(
+            new ActivityResultContracts.RequestMultiplePermissions(),
+            ketQua -> {
+                boolean camera = Boolean.TRUE.equals(ketQua.get(Manifest.permission.CAMERA));
+                boolean thongBao = Boolean.TRUE.equals(ketQua.get(Manifest.permission.POST_NOTIFICATIONS));
+                Toast.makeText(this, getString(R.string.nc1_ket_qua,
+                        camera ? getString(R.string.granted) : getString(R.string.denied),
+                        thongBao ? getString(R.string.granted) : getString(R.string.denied)),
+                        Toast.LENGTH_LONG).show();
+                Log.d(TAG, "NC1: CAMERA=" + camera + ", POST_NOTIFICATIONS=" + thongBao);
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,12 +114,15 @@ public class MainActivity extends AppCompatActivity {
         Button btnChupAnh = findViewById(R.id.btnChupAnh);
         Button btnThongBao = findViewById(R.id.btnThongBao);
         Button btnCaiDat = findViewById(R.id.btnCaiDat);
+        Button btnXinCaHai = findViewById(R.id.btnXinCaHai);
 
         taoKenhThongBao();
 
         btnChupAnh.setOnClickListener(v -> kiemTraRoiChup());
         btnThongBao.setOnClickListener(v -> kiemTraRoiGuiThongBao());
         btnCaiDat.setOnClickListener(v -> moCaiDatUngDung());
+        btnXinCaHai.setOnClickListener(v -> xinHaiQuyen.launch(new String[]{
+                Manifest.permission.CAMERA, Manifest.permission.POST_NOTIFICATIONS}));
     }
 
     @Override
@@ -191,11 +206,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void guiThongBao() {
+        // NC3: bấm vào thông báo thì mở lại ứng dụng
+        Intent moLai = new Intent(this, MainActivity.class);
+        moLai.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        android.app.PendingIntent pi = android.app.PendingIntent.getActivity(
+                this, 0, moLai, android.app.PendingIntent.FLAG_IMMUTABLE);
+
         NotificationCompat.Builder b = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle(getString(R.string.noti_title))
                 .setContentText(getString(R.string.noti_text))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pi)
                 .setAutoCancel(true);
         try {
             NotificationManagerCompat.from(this).notify(NOTI_ID, b.build());
